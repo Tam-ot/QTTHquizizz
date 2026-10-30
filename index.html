@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ôn Tập Trắc Nghiệm Quản Trị Thương Hiệu (80 Câu)</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --correct: #16a34a;
+      --correct-bg: #dcfce7;
+      --correct-border: #22c55e;
+      --wrong: #dc2626;
+      --wrong-bg: #fee2e2;
+      --wrong-border: #ef4444;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    /* Header Bar */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      background: #eff6ff;
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .stat-correct { color: var(--correct); font-weight: 600; }
+    .stat-wrong { color: var(--wrong); font-weight: 600; }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+
+    .btn-icon:hover {
+      background: #e2e8f0;
+    }
+
+    /* Timer Section */
+    .timer-wrapper {
+      background: var(--card);
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .timer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .timer-label {
+      color: var(--muted);
+    }
+
+    .timer-seconds {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--primary);
+    }
+
+    .timer-seconds.urgent {
+      color: var(--wrong);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--primary);
+      transition: width 0.1s linear, background-color 0.2s;
+    }
+
+    .progress-fill.explain-mode {
+      background: var(--warn);
+    }
+
+    .progress-fill.urgent {
+      background: var(--wrong);
+    }
+
+    /* Main Card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .topic-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #0369a1;
+      background: #e0f2fe;
+      padding: 3px 9px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    /* Options */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: inherit;
+      line-height: 1.45;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-btn.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: #14532d;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong-border);
+      color: #7f1d1d;
+    }
+
+    .option-btn.dimmed {
+      opacity: 0.6;
+    }
+
+    .option-status {
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Explanation & Next Bar */
+    .explanation-box {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border-radius: 8px;
+      background: #f0fdf4;
+      border-left: 4px solid var(--correct);
+      display: none;
+    }
+
+    .explanation-box.show {
+      display: block;
+    }
+
+    .result-banner {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .result-banner.is-correct { color: var(--correct); }
+    .result-banner.is-wrong { color: var(--wrong); }
+
+    .explanation-title {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .explanation-text {
+      font-size: 0.95rem;
+      color: #334155;
+    }
+
+    .action-bar {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .explain-countdown-note {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Start & End Screens */
+    .center-screen {
+      text-align: center;
+      padding: 32px 20px;
+    }
+
+    .center-screen h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .center-screen p {
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-size: 0.98rem;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      user-select: none;
+      background: #f8fafc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .score-big {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 12px 0;
+    }
+
+    .end-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .shortcut-hint {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Question Jump Modal / Selector */
+    select.jump-select {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.85rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Top Header (Visible during quiz) -->
+    <div id="quizHeader" class="header hidden">
+      <div class="header-left">
+        <span id="questionCounter" class="badge">Câu 1 / 80</span>
+        <div class="stats">
+          <span class="stat-correct">✓ Đúng: <span id="correctCount">0</span></span>
+          <span class="stat-wrong">✗ Sai: <span id="wrongCount">0</span></span>
+        </div>
+      </div>
+      <div class="header-controls">
+        <select id="jumpSelect" class="jump-select" title="Chuyển nhanh đến câu hỏi"></select>
+        <button id="soundToggleBtn" class="btn-icon" title="Bật/Tắt âm thanh">🔊 Âm thanh: Bật</button>
+        <button id="restartTopBtn" class="btn-icon" title="Làm lại từ đầu">↺ Làm lại</button>
+      </div>
+    </div>
+
+    <!-- Timer Bar (Visible during quiz) -->
+    <div id="timerWrapper" class="timer-wrapper hidden">
+      <div class="timer-header">
+        <span id="timerPhaseLabel" class="timer-label">⏱ Thời gian trả lời câu hỏi</span>
+        <span id="timerSeconds" class="timer-seconds">20s</span>
+      </div>
+      <div class="progress-track">
+        <div id="timerBar" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen" class="card center-screen">
+      <h1>Ôn Tập Quản Trị Thương Hiệu</h1>
+      <p>Bộ 80 câu hỏi trắc nghiệm có đáp án &amp; giải thích chi tiết giáo trình.<br/>Mỗi câu có <strong>20 giây</strong> suy nghĩ và <strong>20 giây</strong> xem giải thích.</p>
+
+      <div class="settings-row">
+        <label class="checkbox-label">
+          <input type="checkbox" id="shuffleCheck" />
+          Đảo ngẫu nhiên thứ tự câu hỏi
+        </label>
+      </div>
+
+      <button id="startBtn" class="btn-primary">Bắt đầu ôn tập (80 câu) ➔</button>
+      <div class="shortcut-hint">Mẹo: Có thể dùng phím <strong>1, 2, 3, 4</strong> (hoặc A, B, C, D) để chọn đáp án và <strong>Enter / Space / →</strong> để qua câu tiếp theo.</div>
+    </div>
+
+    <!-- Quiz Card -->
+    <div id="quizCard" class="card hidden">
+      <div id="topicTag" class="topic-tag">CHỦ ĐỀ</div>
+      <div id="questionText" class="question-text">Nội dung câu hỏi?</div>
+
+      <div id="optionsList" class="options-list"></div>
+
+      <!-- Explanation & Next Button -->
+      <div id="explanationBox" class="explanation-box">
+        <div id="resultBanner" class="result-banner"></div>
+        <div class="explanation-title">📖 Phân tích &amp; Căn cứ giáo trình:</div>
+        <div id="explanationText" class="explanation-text"></div>
+
+        <div class="action-bar">
+          <span class="explain-countdown-note">Tự động chuyển câu sau <strong id="explainInlineSec">20</strong>s...</span>
+          <button id="nextBtn" class="btn-primary">Câu tiếp theo (Next) ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- End Screen -->
+    <div id="endScreen" class="card center-screen hidden">
+      <h1>Hoàn Thành Bài Ôn Tập!</h1>
+      <div id="finalScore" class="score-big">0 / 80</div>
+      <p id="finalSummary">Bạn đã trả lời đúng 0 câu.</p>
+
+      <div class="end-actions">
+        <button id="retryWrongBtn" class="btn-primary hidden" style="background:#dc2626;">Ôn lại các câu sai (0 câu)</button>
+        <button id="restartEndBtn" class="btn-primary">Làm lại toàn bộ 80 câu</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="questions.js"></script>
+  <script>
+    // Constants
+    const QUESTION_TIME = 20; // 20 seconds to answer
+    const EXPLAIN_TIME = 20;  // 20 seconds to read explanation
+
+    // State
+    let activeQuestions = [];
+    let currentIndex = 0;
+    let correctScore = 0;
+    let wrongScore = 0;
+    let wrongQuestionsList = [];
+    let phase = "IDLE"; // "QUESTION" | "EXPLAIN" | "IDLE"
+    let soundEnabled = true;
+
+    // Timer variables
+    let timerInterval = null;
+    let endTime = 0;
+    let currentDuration = QUESTION_TIME;
+
+    // Web Audio API Context for synthesized sounds
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+
+        if (type === "correct") {
+          // Pleasant two-note ascending chime (C5 -> E5 -> G5)
+          const notes = [523.25, 659.25, 783.99];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+            gain.gain.setValueAtTime(0.18, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.28);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.29);
+          });
+        } else if (type === "wrong") {
+          // Low descending buzz (A3 -> E3)
+          const freqs = [220, 164.81];
+          freqs.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+
+            gain.gain.setValueAtTime(0.14, now + idx * 0.14);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.14 + 0.22);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.14);
+            osc.stop(now + idx * 0.14 + 0.23);
+          });
+        }
+      } catch (e) {
+        // Ignore audio errors if blocked by browser policy
+      }
+    }
+
+    // DOM Elements
+    const startScreen = document.getElementById("startScreen");
+    const quizHeader = document.getElementById("quizHeader");
+    const timerWrapper = document.getElementById("timerWrapper");
+    const quizCard = document.getElementById("quizCard");
+    const endScreen = document.getElementById("endScreen");
+
+    const shuffleCheck = document.getElementById("shuffleCheck");
+    const startBtn = document.getElementById("startBtn");
+    const soundToggleBtn = document.getElementById("soundToggleBtn");
+    const restartTopBtn = document.getElementById("restartTopBtn");
+    const jumpSelect = document.getElementById("jumpSelect");
+
+    const questionCounter = document.getElementById("questionCounter");
+    const correctCountEl = document.getElementById("correctCount");
+    const wrongCountEl = document.getElementById("wrongCount");
+
+    const timerPhaseLabel = document.getElementById("timerPhaseLabel");
+    const timerSeconds = document.getElementById("timerSeconds");
+    const timerBar = document.getElementById("timerBar");
+
+    const topicTag = document.getElementById("topicTag");
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+
+    const explanationBox = document.getElementById("explanationBox");
+    const resultBanner = document.getElementById("resultBanner");
+    const explanationText = document.getElementById("explanationText");
+    const explainInlineSec = document.getElementById("explainInlineSec");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const finalScore = document.getElementById("finalScore");
+    const finalSummary = document.getElementById("finalSummary");
+    const retryWrongBtn = document.getElementById("retryWrongBtn");
+    const restartEndBtn = document.getElementById("restartEndBtn");
+
+    // Utility: Shuffle array
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function populateJumpSelect() {
+      jumpSelect.innerHTML = "";
+      activeQuestions.forEach((q, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = `Đến câu ${idx + 1} (Gốc: Câu ${q.id})`;
+        jumpSelect.appendChild(opt);
+      });
+    }
+
+    function startQuiz(customList = null) {
+      initAudio();
+      if (customList) {
+        activeQuestions = [...customList];
+      } else {
+        activeQuestions = shuffleCheck.checked ? shuffleArray(QUESTIONS) : [...QUESTIONS];
+      }
+
+      currentIndex = 0;
+      correctScore = 0;
+      wrongScore = 0;
+      wrongQuestionsList = [];
+
+      updateScoreUI();
+      populateJumpSelect();
+
+      startScreen.classList.add("hidden");
+      endScreen.classList.add("hidden");
+      quizHeader.classList.remove("hidden");
+      timerWrapper.classList.remove("hidden");
+      quizCard.classList.remove("hidden");
+
+      renderQuestion();
+    }
+
+    function updateScoreUI() {
+      correctCountEl.textContent = correctScore;
+      wrongCountEl.textContent = wrongScore;
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function startCountdown(seconds, mode, onComplete) {
+      stopTimer();
+      currentDuration = seconds;
+      endTime = Date.now() + seconds * 1000;
+
+      timerBar.classList.remove("explain-mode", "urgent");
+      timerSeconds.classList.remove("urgent");
+
+      if (mode === "EXPLAIN") {
+        timerPhaseLabel.textContent = "📖 Thời gian xem giải thích (Bấm Next để qua luôn)";
+        timerBar.classList.add("explain-mode");
+      } else {
+        timerPhaseLabel.textContent = "⏱ Thời gian trả lời câu hỏi";
+      }
+
+      updateTimerTick(mode, onComplete);
+      timerInterval = setInterval(() => updateTimerTick(mode, onComplete), 100);
+    }
+
+    function updateTimerTick(mode, onComplete) {
+      const remainingMs = Math.max(0, endTime - Date.now());
+      const remainingSec = Math.ceil(remainingMs / 1000);
+      const pct = (remainingMs / (currentDuration * 1000)) * 100;
+
+      timerSeconds.textContent = `${remainingSec}s`;
+      timerBar.style.width = `${pct}%`;
+
+      if (mode === "EXPLAIN") {
+        explainInlineSec.textContent = remainingSec;
+      }
+
+      if (mode === "QUESTION" && remainingSec <= 5) {
+        timerSeconds.classList.add("urgent");
+        timerBar.classList.add("urgent");
+      }
+
+      if (remainingMs <= 0) {
+        stopTimer();
+        onComplete();
+      }
+    }
+
+    function renderQuestion() {
+      if (currentIndex >= activeQuestions.length) {
+        finishQuiz();
+        return;
+      }
+
+      phase = "QUESTION";
+      const q = activeQuestions[currentIndex];
+
+      questionCounter.textContent = `Câu ${currentIndex + 1} / ${activeQuestions.length}`;
+      jumpSelect.value = currentIndex;
+
+      topicTag.textContent = `[${q.topic}] • Câu gốc #${q.id}`;
+      questionText.textContent = `Câu ${q.id}: ${q.question}`;
+
+      explanationBox.classList.remove("show");
+      optionsList.innerHTML = "";
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = `
+          <span>${optText}</span>
+          <span class="option-status"></span>
+        `;
+        btn.addEventListener("click", () => handleSelectAnswer(idx));
+        optionsList.appendChild(btn);
+      });
+
+      startCountdown(QUESTION_TIME, "QUESTION", () => {
+        // Time ran out (-1 indicates timeout)
+        handleSelectAnswer(-1);
+      });
+    }
+
+    function handleSelectAnswer(selectedIndex) {
+      if (phase !== "QUESTION") return;
+      phase = "EXPLAIN";
+      stopTimer();
+
+      const q = activeQuestions[currentIndex];
+      const isCorrect = selectedIndex === q.correct;
+      const optionButtons = optionsList.querySelectorAll(".option-btn");
+
+      optionButtons.forEach((btn, idx) => {
+        btn.disabled = true;
+        const statusSpan = btn.querySelector(".option-status");
+
+        if (idx === q.correct) {
+          btn.classList.add("correct");
+          statusSpan.textContent = "✓ Đáp án đúng";
+        } else if (idx === selectedIndex) {
+          btn.classList.add("wrong");
+          statusSpan.textContent = "✗ Bạn chọn";
+        } else {
+          btn.classList.add("dimmed");
+        }
+      });
+
+      if (isCorrect) {
+        correctScore++;
+        playSound("correct");
+        resultBanner.className = "result-banner is-correct";
+        resultBanner.textContent = "🎉 Chính xác!";
+      } else {
+        wrongScore++;
+        if (!wrongQuestionsList.some(item => item.id === q.id)) {
+          wrongQuestionsList.push(q);
+        }
+        playSound("wrong");
+        resultBanner.className = "result-banner is-wrong";
+        if (selectedIndex === -1) {
+          resultBanner.textContent = "⏰ Hết thời gian! (20 giây)";
+        } else {
+          resultBanner.textContent = "❌ Chưa chính xác!";
+        }
+      }
+
+      updateScoreUI();
+
+      explanationText.textContent = q.explanation;
+      explanationBox.classList.add("show");
+
+      // Start 20s explanation countdown
+      startCountdown(EXPLAIN_TIME, "EXPLAIN", () => {
+        goToNextQuestion();
+      });
+    }
+
+    function goToNextQuestion() {
+      stopTimer();
+      currentIndex++;
+      renderQuestion();
+    }
+
+    function finishQuiz() {
+      stopTimer();
+      phase = "IDLE";
+
+      quizHeader.classList.add("hidden");
+      timerWrapper.classList.add("hidden");
+      quizCard.classList.add("hidden");
+      endScreen.classList.remove("hidden");
+
+      const total = activeQuestions.length;
+      const pct = total > 0 ? Math.round((correctScore / total) * 100) : 0;
+
+      finalScore.textContent = `${correctScore} / ${total} (${pct}%)`;
+      finalSummary.textContent = `Đúng: ${correctScore} câu • Sai / Hết giờ: ${wrongScore} câu.`;
+
+      if (wrongQuestionsList.length > 0) {
+        retryWrongBtn.classList.remove("hidden");
+        retryWrongBtn.textContent = `Ôn lại ${wrongQuestionsList.length} câu làm sai`;
+      } else {
+        retryWrongBtn.classList.add("hidden");
+      }
+    }
+
+    // Event Listeners
+    startBtn.addEventListener("click", () => startQuiz());
+
+    nextBtn.addEventListener("click", () => {
+      if (phase === "EXPLAIN") {
+        goToNextQuestion();
+      }
+    });
+
+    soundToggleBtn.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      soundToggleBtn.textContent = soundEnabled ? "🔊 Âm thanh: Bật" : "🔇 Âm thanh: Tắt";
+    });
+
+    restartTopBtn.addEventListener("click", () => {
+      stopTimer();
+      phase = "IDLE";
+      quizHeader.classList.add("hidden");
+      timerWrapper.classList.add("hidden");
+      quizCard.classList.add("hidden");
+      endScreen.classList.add("hidden");
+      startScreen.classList.remove("hidden");
+    });
+
+    jumpSelect.addEventListener("change", (e) => {
+      const targetIdx = parseInt(e.target.value, 10);
+      if (!isNaN(targetIdx)) {
+        stopTimer();
+        currentIndex = targetIdx;
+        renderQuestion();
+      }
+    });
+
+    retryWrongBtn.addEventListener("click", () => {
+      if (wrongQuestionsList.length > 0) {
+        startQuiz(wrongQuestionsList);
+      }
+    });
+
+    restartEndBtn.addEventListener("click", () => {
+      startQuiz();
+    });
+
+    // Keyboard shortcuts for fast review
+    window.addEventListener("keydown", (e) => {
+      if (phase === "QUESTION") {
+        const key = e.key.toUpperCase();
+        if (key === "1" || key === "A") handleSelectAnswer(0);
+        else if (key === "2" || key === "B") handleSelectAnswer(1);
+        else if (key === "3" || key === "C") handleSelectAnswer(2);
+        else if (key === "4" || key === "D") handleSelectAnswer(3);
+      } else if (phase === "EXPLAIN") {
+        if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight") {
+          e.preventDefault();
+          goToNextQuestion();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
